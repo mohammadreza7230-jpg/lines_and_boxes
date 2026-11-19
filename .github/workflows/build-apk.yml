@@ -16,15 +16,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Set up Node.js 20
-        uses: actions/setup-node@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Set up Temurin Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -73,11 +73,11 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -f "package-lock.json" ]]; then
-            echo "Found package-lock.json — installing dependencies with npm ci..."
-            npm ci
+            echo "Found package-lock.json — installing dependencies with npm ci --legacy-peer-deps..."
+            npm ci --legacy-peer-deps
           else
-            echo "No package-lock.json found — installing dependencies with npm install..."
-            npm install
+            echo "No package-lock.json found — installing dependencies with npm install --legacy-peer-deps..."
+            npm install --legacy-peer-deps
           fi
 
           npm run build
@@ -110,7 +110,7 @@ jobs:
           fi
 
           # Install Capacitor packages inside the temporary runner only (never committed)
-          npm install --no-save @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7
+          npm install --no-save --legacy-peer-deps @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7
 
           REPO_NAME="${GITHUB_REPOSITORY#*/}"
           APP_NAME="$(echo "${REPO_NAME}" | tr '_-' ' ' | sed 's/[^A-Za-z0-9 ]//g; s/  */ /g; s/^ //; s/ $//')"
@@ -192,7 +192,7 @@ jobs:
 
       - name: Upload debug APK artifact
         id: upload_artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: app-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
