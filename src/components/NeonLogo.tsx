@@ -6,14 +6,14 @@ interface NeonLogoProps {
   compact?: boolean;
 }
 
-export const NeonLogo: React.FC<NeonLogoProps> = ({ theme, compact = false }) => {
+export const NeonLogo: React.FC<NeonLogoProps> = React.memo(({ theme, compact = false }) => {
   return (
     <div className={`relative flex flex-col items-center select-none ${compact ? 'gap-1' : 'gap-2'}`}>
-      {/* Ambient flare behind logo */}
+      {/* Ambient radial flare behind logo (zero blur filter pass!) */}
       <div
-        className="pointer-events-none absolute -inset-x-8 -inset-y-4 blur-2xl opacity-45"
+        className="pointer-events-none absolute -inset-x-10 -inset-y-6 opacity-50"
         style={{
-          background: `radial-gradient(circle at 65% 40%, ${theme.p2}88 0%, transparent 48%), radial-gradient(circle at 35% 50%, ${theme.p1}88 0%, transparent 48%)`,
+          background: `radial-gradient(ellipse at 68% 42%, ${theme.p2}55 0%, transparent 52%), radial-gradient(ellipse at 32% 48%, ${theme.p1}55 0%, transparent 52%)`,
         }}
       />
 
@@ -34,8 +34,8 @@ export const NeonLogo: React.FC<NeonLogoProps> = ({ theme, compact = false }) =>
           نقطه
           {/* Corner flare */}
           <span
-            className="pointer-events-none absolute -top-1 -left-1 h-2.5 w-2.5 rounded-full blur-[2px]"
-            style={{ backgroundColor: '#ffffff', boxShadow: `0 0 14px 4px ${theme.p2}` }}
+            className="pointer-events-none absolute -top-1 -left-1 h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: '#ffffff', boxShadow: `0 0 12px 3px ${theme.p2}` }}
           />
         </span>
 
@@ -65,4 +65,4 @@ export const NeonLogo: React.FC<NeonLogoProps> = ({ theme, compact = false }) =>
       </p>
     </div>
   );
-};
+});

@@ -28,7 +28,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
   onToggleHaptic,
 }) => {
   return (
-    <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/28 px-5 py-6 backdrop-blur-[3.5px]">
+    <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-[#020612]/66 px-5 py-6">
       {/* Main Dual-Tone Chamfered True-Glass Panel matching Pause mockup */}
       <CyberGlassPanel
         colorStart={theme.p1}
@@ -36,7 +36,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
         colorEnd={theme.p1}
         className="w-full max-w-[342px]"
         innerClassName="flex flex-col items-center px-6 py-7"
-        tintBg={`linear-gradient(145deg, ${theme.p1}18 0%, rgba(4, 9, 20, 0.34) 50%, ${theme.p2}18 100%)`}
+        tintBg={`linear-gradient(145deg, ${theme.p1}18 0%, rgba(4, 9, 20, 0.56) 50%, ${theme.p2}18 100%)`}
         doubleFrame
       >
           <h2
@@ -52,18 +52,18 @@ export const PauseModal: React.FC<PauseModalProps> = ({
           {/* Signature Glowing Crimson Pause Bars */}
           <div className="relative z-10 my-5 flex items-center justify-center gap-3">
             <span
-              className="h-11 w-3.5 rounded-sm border-2 backdrop-blur-[2px]"
+              className="h-11 w-3.5 rounded-sm border-2"
               style={{
                 borderColor: theme.p1,
-                backgroundColor: `${theme.p1}18`,
+                backgroundColor: `${theme.p1}1e`,
                 boxShadow: `0 0 18px ${theme.p1}, inset 0 0 8px ${theme.p1}66`,
               }}
             />
             <span
-              className="h-11 w-3.5 rounded-sm border-2 backdrop-blur-[2px]"
+              className="h-11 w-3.5 rounded-sm border-2"
               style={{
                 borderColor: theme.p1,
-                backgroundColor: `${theme.p1}18`,
+                backgroundColor: `${theme.p1}1e`,
                 boxShadow: `0 0 18px ${theme.p1}, inset 0 0 8px ${theme.p1}66`,
               }}
             />
@@ -122,7 +122,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
               type="button"
               onClick={onToggleSound}
               aria-label={soundEnabled ? 'قطع صدا' : 'وصل صدا'}
-              className="flex h-13 w-13 items-center justify-center rounded-full border-2 bg-black/25 backdrop-blur-[4px] transition-transform active:scale-90 cursor-pointer"
+              className="flex h-13 w-13 items-center justify-center rounded-full border-2 bg-black/38 transition-transform active:scale-90 cursor-pointer"
               style={{
                 borderColor: soundEnabled ? theme.p2 : '#64748b',
                 color: soundEnabled ? theme.p2 : '#94a3b8',
@@ -136,7 +136,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
               type="button"
               onClick={onToggleHaptic}
               aria-label={hapticEnabled ? 'غیرفعال کردن لرزش' : 'فعال کردن لرزش'}
-              className="flex h-13 w-13 items-center justify-center rounded-full border-2 bg-black/25 backdrop-blur-[4px] transition-transform active:scale-90 cursor-pointer"
+              className="flex h-13 w-13 items-center justify-center rounded-full border-2 bg-black/38 transition-transform active:scale-90 cursor-pointer"
               style={{
                 borderColor: hapticEnabled ? theme.p1 : '#64748b',
                 color: hapticEnabled ? theme.p1 : '#94a3b8',
@@ -149,7 +149,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
       </CyberGlassPanel>
 
       {/* Bottom brand footnote matching mockup */}
-      <div className="mt-3.5 rounded-xl border border-white/10 bg-black/35 px-4 py-1.5 text-center backdrop-blur-[4px]">
+      <div className="mt-3.5 rounded-xl border border-white/10 bg-black/50 px-4 py-1.5 text-center">
         <p className="text-xs font-semibold text-cyan-100/90">بازی نقطه و خط - نبرد سایبری</p>
         <p className="text-[11px] text-slate-300/80">نسخه ۱.۰</p>
       </div>

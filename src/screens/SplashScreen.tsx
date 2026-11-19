@@ -128,63 +128,52 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ theme, onComplete })
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
 
-      // Orbiting neon particles
+      // Orbiting neon particles (zero shadowBlur!)
       for (const sp of sparks) {
         sp.angle += sp.speed;
         const sx = size / 2 + Math.cos(sp.angle) * sp.radius;
         const sy = size / 2 + sp.yOff * 0.75 + Math.sin(sp.angle * 1.4) * 18;
         ctx.fillStyle = sp.isRed ? theme.p1 : theme.p2;
-        ctx.shadowColor = sp.isRed ? theme.p1 : theme.p2;
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.arc(sx, sy, sp.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillRect(sx - sp.size, sy - sp.size, sp.size * 2, sp.size * 2);
       }
 
       const outerPts = outerVerts.map((v) => project(v, 185, rotY, rotX));
       const innerPts = outerVerts.map((v) => project(v, 118, rotY, rotX));
 
-      // Crimson cross-diagonals
-      ctx.strokeStyle = theme.p1;
-      ctx.shadowColor = theme.p1;
-      ctx.shadowBlur = 14;
-      ctx.lineWidth = 1.6;
-      for (const [a, b] of diagonals) {
+      const drawBatchedEdges = (
+        pts: { x: number; y: number }[],
+        pairs: [number, number][],
+        color: string,
+        width: number,
+        alpha: number
+      ) => {
+        ctx.globalAlpha = alpha;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
         ctx.beginPath();
-        ctx.moveTo(outerPts[a].x, outerPts[a].y);
-        ctx.lineTo(outerPts[b].x, outerPts[b].y);
+        for (const [a, b] of pairs) {
+          ctx.moveTo(pts[a].x, pts[a].y);
+          ctx.lineTo(pts[b].x, pts[b].y);
+        }
         ctx.stroke();
-      }
+      };
 
-      // Inner nested cube (glowing crimson/cyan blend)
-      ctx.strokeStyle = theme.p2;
-      ctx.shadowColor = theme.p2;
-      ctx.shadowBlur = 12;
-      ctx.lineWidth = 1.4;
-      for (const [a, b] of edges) {
-        ctx.beginPath();
-        ctx.moveTo(innerPts[a].x, innerPts[a].y);
-        ctx.lineTo(innerPts[b].x, innerPts[b].y);
-        ctx.stroke();
-      }
+      // Crimson cross-diagonals (halo + crisp core)
+      drawBatchedEdges(outerPts, diagonals, theme.p1, 4.5, 0.28);
+      drawBatchedEdges(outerPts, diagonals, theme.p1, 1.6, 0.95);
+
+      // Inner nested cyan cube
+      drawBatchedEdges(innerPts, edges, theme.p2, 4, 0.25);
+      drawBatchedEdges(innerPts, edges, theme.p2, 1.4, 0.9);
 
       // Outer bright cyan wireframe cube
-      ctx.strokeStyle = '#d8ffff';
-      ctx.shadowColor = theme.p2;
-      ctx.shadowBlur = 18;
-      ctx.lineWidth = 2.4;
-      for (const [a, b] of edges) {
-        ctx.beginPath();
-        ctx.moveTo(outerPts[a].x, outerPts[a].y);
-        ctx.lineTo(outerPts[b].x, outerPts[b].y);
-        ctx.stroke();
-      }
+      drawBatchedEdges(outerPts, edges, theme.p2, 7, 0.25);
+      drawBatchedEdges(outerPts, edges, '#d8ffff', 2.2, 1);
 
       // Glowing vertex nodes
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#ffffff';
       for (const pt of outerPts) {
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = theme.p2;
-        ctx.shadowBlur = 14;
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
         ctx.fill();
@@ -256,9 +245,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ theme, onComplete })
           >
             {/* Leading spark flare */}
             <span
-              className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-white blur-[2px]"
+              className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 h-4 w-4 rounded-full bg-white"
               style={{
-                boxShadow: `0 0 14px 4px ${theme.p2}, 0 0 22px 6px ${theme.p1}`,
+                boxShadow: `0 0 12px 4px ${theme.p2}, 0 0 20px 6px ${theme.p1}`,
               }}
             />
           </div>

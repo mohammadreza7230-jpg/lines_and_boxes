@@ -25,13 +25,13 @@ const CyberModalShell: React.FC<ModalShellProps> = ({
   onClose,
   children,
 }) => (
-  <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/38 px-4 py-6 backdrop-blur-[4px]">
+  <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#020612]/72 px-4 py-6">
     <CyberGlassPanel
       colorStart={theme.p2}
       colorEnd={theme.p1}
       className="w-full max-w-[360px] max-h-[86%]"
       innerClassName="flex max-h-full flex-col"
-      tintBg={`linear-gradient(155deg, ${theme.p2}14 0%, rgba(5, 10, 22, 0.56) 50%, ${theme.p1}14 100%)`}
+      tintBg={`linear-gradient(155deg, ${theme.p2}14 0%, rgba(5, 10, 22, 0.72) 50%, ${theme.p1}14 100%)`}
       doubleFrame={false}
     >
       <div className="flex items-center justify-between border-b border-white/12 px-5 py-3.5">

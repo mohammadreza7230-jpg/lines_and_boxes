@@ -109,13 +109,13 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
             }}
             aria-label={soundEnabled ? 'قطع صدا' : 'وصل صدا'}
             title={soundEnabled ? 'صدا روشن' : 'صدا خاموش'}
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/20 backdrop-blur-[4px] transition-all duration-150 active:scale-90 hover:scale-105 cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/25 transition-transform duration-150 active:scale-90 hover:scale-105 cursor-pointer"
             style={{
               borderColor: soundEnabled ? theme.p2 : theme.p1,
               color: soundEnabled ? theme.p2 : theme.p1,
-              boxShadow: `0 0 16px ${soundEnabled ? theme.p2 : theme.p1}99, inset 0 0 12px ${
+              boxShadow: `0 0 14px ${soundEnabled ? theme.p2 : theme.p1}88, inset 0 0 10px ${
                 soundEnabled ? theme.p2 : theme.p1
-              }38`,
+              }33`,
             }}
           >
             {soundEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
@@ -130,11 +130,11 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
             }}
             aria-label="راهنمای بازی"
             title="قوانین بازی"
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/20 backdrop-blur-[4px] transition-all duration-150 active:scale-90 hover:scale-105 cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/25 transition-transform duration-150 active:scale-90 hover:scale-105 cursor-pointer"
             style={{
               borderColor: theme.p2,
               color: theme.p2,
-              boxShadow: `0 0 16px ${theme.p2}99, inset 0 0 12px ${theme.p2}38`,
+              boxShadow: `0 0 14px ${theme.p2}88, inset 0 0 10px ${theme.p2}33`,
             }}
           >
             <HelpCircle className="h-5 w-5" />
@@ -149,11 +149,11 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
             }}
             aria-label="آمار و افتخارات"
             title="آمار و رکوردها"
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/20 backdrop-blur-[4px] transition-all duration-150 active:scale-90 hover:scale-105 cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/25 transition-transform duration-150 active:scale-90 hover:scale-105 cursor-pointer"
             style={{
               borderColor: theme.p2,
               color: theme.p2,
-              boxShadow: `0 0 16px ${theme.p2}99, inset 0 0 12px ${theme.p2}38`,
+              boxShadow: `0 0 14px ${theme.p2}88, inset 0 0 10px ${theme.p2}33`,
             }}
           >
             <Trophy className="h-5 w-5" />
@@ -168,11 +168,11 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
             }}
             aria-label="مربی هوشمند تاکتیکی"
             title="مربی هوشمند تاکتیکی"
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/20 backdrop-blur-[4px] transition-all duration-150 active:scale-90 hover:scale-105 cursor-pointer"
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-black/25 transition-transform duration-150 active:scale-90 hover:scale-105 cursor-pointer"
             style={{
               borderColor: theme.p1,
               color: '#ff90a6',
-              boxShadow: `0 0 16px ${theme.p1}99, inset 0 0 12px ${theme.p1}38`,
+              boxShadow: `0 0 14px ${theme.p1}88, inset 0 0 10px ${theme.p1}33`,
             }}
           >
             <Sparkles className="h-5 w-5" />

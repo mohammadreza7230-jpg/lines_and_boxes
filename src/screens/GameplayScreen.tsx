@@ -245,17 +245,17 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
         {/* Player 2 / AI Card (Right side in RTL -> wait: in mockup P1 is top-left, P2/AI is top-right!) */}
         {/* In dir="rtl", first flex child is RIGHT, last flex child is LEFT. Let's match the mockup exact positions: AI/P2 on right, P1 on left! */}
         <div
-          className="flex flex-1 items-center justify-between gap-2 rounded-2xl border-2 px-2.5 py-2 backdrop-blur-[6px] transition-all duration-200"
+          className="flex flex-1 items-center justify-between gap-2 rounded-2xl border-2 px-2.5 py-2 transition-colors duration-200"
           style={{
             borderColor: board.currentPlayer === 2 ? theme.p2 : `${theme.p2}55`,
             background:
               board.currentPlayer === 2
-                ? `linear-gradient(135deg, ${theme.p2}22 0%, rgba(5,16,28,0.36) 100%)`
-                : 'rgba(6, 14, 24, 0.28)',
+                ? `linear-gradient(135deg, ${theme.p2}22 0%, rgba(5,16,28,0.42) 100%)`
+                : 'rgba(6, 14, 24, 0.32)',
             boxShadow:
               board.currentPlayer === 2
-                ? `0 0 18px ${theme.p2}88, inset 0 0 12px ${theme.p2}33`
-                : `0 0 8px ${theme.p2}22`,
+                ? `0 0 14px ${theme.p2}77, inset 0 0 10px ${theme.p2}28`
+                : `0 0 6px ${theme.p2}22`,
           }}
         >
           <CyberAvatar
@@ -270,7 +270,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
               className="text-2xl font-black leading-tight tabular-nums"
               style={{
                 color: '#d8ffff',
-                textShadow: `0 0 12px ${theme.p2}`,
+                textShadow: `0 0 10px ${theme.p2}`,
               }}
             >
               {toPersianDigits(board.scores.p2)}
@@ -286,7 +286,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
                 cx="28"
                 cy="28"
                 r="24"
-                fill="rgba(4, 10, 22, 0.36)"
+                fill="rgba(4, 10, 22, 0.4)"
                 stroke="rgba(255, 255, 255, 0.14)"
                 strokeWidth="3.5"
               />
@@ -301,8 +301,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
                 strokeDasharray={timerCircumference}
                 strokeDashoffset={timerOffset}
                 style={{
-                  transition: 'stroke-dashoffset 0.35s linear, stroke 0.2s ease',
-                  filter: `drop-shadow(0 0 6px ${timerColor})`,
+                  transition: 'stroke-dashoffset 0.35s linear',
                 }}
               />
             </svg>
@@ -310,7 +309,7 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
               className="absolute text-lg font-black tabular-nums"
               style={{
                 color: '#ffffff',
-                textShadow: `0 0 10px ${timerColor}`,
+                textShadow: `0 0 8px ${timerColor}`,
               }}
             >
               {settings.turnTimerEnabled ? toPersianDigits(timeLeft) : '∞'}
@@ -342,17 +341,17 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
 
         {/* Player 1 Card (Left side in RTL, matching mockup) */}
         <div
-          className="flex flex-1 items-center justify-between gap-2 rounded-2xl border-2 px-2.5 py-2 backdrop-blur-[6px] transition-all duration-200"
+          className="flex flex-1 items-center justify-between gap-2 rounded-2xl border-2 px-2.5 py-2 transition-colors duration-200"
           style={{
             borderColor: board.currentPlayer === 1 ? theme.p1 : `${theme.p1}55`,
             background:
               board.currentPlayer === 1
-                ? `linear-gradient(135deg, ${theme.p1}24 0%, rgba(24,6,14,0.38) 100%)`
-                : 'rgba(18, 6, 14, 0.28)',
+                ? `linear-gradient(135deg, ${theme.p1}24 0%, rgba(24,6,14,0.44) 100%)`
+                : 'rgba(18, 6, 14, 0.32)',
             boxShadow:
               board.currentPlayer === 1
-                ? `0 0 18px ${theme.p1}88, inset 0 0 12px ${theme.p1}33`
-                : `0 0 8px ${theme.p1}22`,
+                ? `0 0 14px ${theme.p1}77, inset 0 0 10px ${theme.p1}28`
+                : `0 0 6px ${theme.p1}22`,
           }}
         >
           <div className="flex flex-col items-center flex-1 min-w-0">
@@ -392,10 +391,10 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
           <div
             key={comboToast.id}
             onAnimationEnd={() => setComboToast(null)}
-            className="animate-combo-float pointer-events-none absolute top-4 left-1/2 z-30 whitespace-nowrap rounded-full border px-4 py-1.5 text-base font-black backdrop-blur-md"
+            className="animate-combo-float pointer-events-none absolute top-4 left-1/2 z-30 whitespace-nowrap rounded-full border px-4 py-1.5 text-base font-black"
             style={{
               borderColor: comboToast.player === 1 ? theme.p1 : theme.p2,
-              backgroundColor: 'rgba(4, 8, 18, 0.85)',
+              backgroundColor: 'rgba(4, 8, 18, 0.9)',
               color: '#ffffff',
               boxShadow: `0 0 22px ${comboToast.player === 1 ? theme.p1 : theme.p2}`,
               textShadow: `0 0 10px ${comboToast.player === 1 ? theme.p1 : theme.p2}`,
@@ -419,11 +418,11 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
           className="flex flex-col items-center gap-1 cursor-pointer transition-transform active:scale-90"
         >
           <div
-            className="flex h-12 w-12 items-center justify-center rounded-xl border-2 bg-black/28 backdrop-blur-[5px]"
+            className="flex h-12 w-12 items-center justify-center rounded-xl border-2 bg-black/32"
             style={{
               borderColor: theme.p2,
               color: theme.p2,
-              boxShadow: `0 0 14px ${theme.p2}80, inset 0 0 10px ${theme.p2}26`,
+              boxShadow: `0 0 12px ${theme.p2}70, inset 0 0 8px ${theme.p2}22`,
             }}
           >
             <RotateCcw className="h-5 w-5" />
@@ -436,12 +435,12 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
         {/* Center Active Turn Status Bar + AI Tactical Coach Button */}
         <div className="flex flex-1 items-center gap-2 mb-1">
           <div
-            className="flex h-12 flex-1 items-center justify-center rounded-2xl border px-3 backdrop-blur-[6px] transition-all duration-200"
+            className="flex h-12 flex-1 items-center justify-center rounded-2xl border px-3 transition-colors duration-200"
             style={{
               borderColor:
                 board.currentPlayer === 1 ? `${theme.p1}99` : `${theme.p2}99`,
-              background: 'rgba(14, 20, 36, 0.38)',
-              boxShadow: `0 0 14px ${
+              background: 'rgba(14, 20, 36, 0.44)',
+              boxShadow: `0 0 12px ${
                 board.currentPlayer === 1 ? theme.p1 : theme.p2
               }33`,
             }}
@@ -450,9 +449,9 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
               className="text-sm sm:text-base font-extrabold whitespace-nowrap truncate"
               style={{
                 color: board.currentPlayer === 1 ? '#ffd6de' : '#d6ffff',
-                textShadow: `0 0 10px ${
+                textShadow: `0 0 8px ${
                   board.currentPlayer === 1 ? theme.p1 : theme.p2
-                }aa`,
+                }99`,
               }}
             >
               {activeTurnLabel}
@@ -467,8 +466,8 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
             }}
             aria-label="مربی تاکتیکی هوشمند"
             title="تحلیل حرکت با مربی هوشمند"
-            className="flex h-12 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-400/70 bg-violet-950/30 text-violet-200 backdrop-blur-[5px] transition-transform active:scale-90 hover:border-violet-300 cursor-pointer"
-            style={{ boxShadow: '0 0 12px rgba(139, 92, 246, 0.5)' }}
+            className="flex h-12 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-400/70 bg-violet-950/35 text-violet-200 transition-transform active:scale-90 hover:border-violet-300 cursor-pointer"
+            style={{ boxShadow: '0 0 10px rgba(139, 92, 246, 0.45)' }}
           >
             <Sparkles className="h-5 w-5" />
           </button>
@@ -484,11 +483,11 @@ export const GameplayScreen: React.FC<GameplayScreenProps> = ({
           className="flex flex-col items-center gap-1 cursor-pointer transition-transform active:scale-90"
         >
           <div
-            className="flex h-12 w-12 items-center justify-center rounded-xl border-2 bg-black/28 backdrop-blur-[5px]"
+            className="flex h-12 w-12 items-center justify-center rounded-xl border-2 bg-black/32"
             style={{
               borderColor: theme.p1,
               color: theme.p1,
-              boxShadow: `0 0 14px ${theme.p1}80, inset 0 0 10px ${theme.p1}26`,
+              boxShadow: `0 0 12px ${theme.p1}70, inset 0 0 8px ${theme.p1}22`,
             }}
           >
             <Pause className="h-5 w-5" />

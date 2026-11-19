@@ -108,11 +108,11 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
                   <>
                     <span
                       className="pointer-events-none absolute -top-1 -right-1 h-3.5 w-3.5 border-t-2 border-r-2 z-20"
-                      style={{ borderColor: tc.border, filter: `drop-shadow(0 0 6px ${tc.border})` }}
+                      style={{ borderColor: tc.border }}
                     />
                     <span
                       className="pointer-events-none absolute -bottom-1 -left-1 h-3.5 w-3.5 border-b-2 border-l-2 z-20"
-                      style={{ borderColor: tc.border, filter: `drop-shadow(0 0 6px ${tc.border})` }}
+                      style={{ borderColor: tc.border }}
                     />
                   </>
                 )}
@@ -182,16 +182,16 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
                   className="relative flex flex-col items-center cursor-pointer transition-transform duration-150 active:scale-95"
                 >
                   <div
-                    className="w-full rounded-full border-2 py-2.5 text-center text-sm font-extrabold backdrop-blur-[5px] transition-all"
+                    className="w-full rounded-full border-2 py-2.5 text-center text-sm font-extrabold transition-colors"
                     style={{
                       borderColor: isSelected ? d.color : `${d.color}66`,
                       background: isSelected
-                        ? `linear-gradient(180deg, ${d.color}32 0%, rgba(6,12,24,0.34) 100%)`
-                        : 'rgba(6, 12, 24, 0.28)',
+                        ? `linear-gradient(180deg, ${d.color}32 0%, rgba(6,12,24,0.42) 100%)`
+                        : 'rgba(6, 12, 24, 0.34)',
                       color: isSelected ? '#ffffff' : 'rgba(226, 232, 240, 0.85)',
                       boxShadow: isSelected
-                        ? `0 0 18px ${d.color}aa, inset 0 0 12px ${d.color}44`
-                        : `0 0 8px ${d.color}22`,
+                        ? `0 0 14px ${d.color}99, inset 0 0 10px ${d.color}40`
+                        : `0 0 6px ${d.color}22`,
                     }}
                   >
                     {d.label}
@@ -210,7 +210,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
           </div>
         </div>
       ) : (
-        <div className="relative z-10 mt-3 rounded-2xl border border-cyan-400/25 bg-black/28 px-4 py-3 text-center backdrop-blur-[5px]">
+        <div className="relative z-10 mt-3 rounded-2xl border border-cyan-400/25 bg-black/32 px-4 py-3 text-center">
           <p className="text-xs font-semibold text-cyan-200/95">
             دو بازیکن به‌صورت نوبتی روی یک دستگاه با یکدیگر رقابت می‌کنند.
           </p>
@@ -225,12 +225,12 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({
             soundEngine.playUiClick();
             onStartMatch();
           }}
-          className="neon-ring-border animate-pulse-cta relative flex w-full max-w-[310px] items-center justify-center gap-3 rounded-full py-3.5 px-6 backdrop-blur-[5px] cursor-pointer transition-transform active:scale-95"
+          className="neon-ring-border animate-pulse-cta relative flex w-full max-w-[310px] items-center justify-center gap-3 rounded-full py-3.5 px-6 cursor-pointer transition-transform active:scale-95"
           style={
             {
               '--ring-gradient': `linear-gradient(90deg, ${theme.p2}, ${theme.p1}, ${theme.p2})`,
               '--ring-width': '2.2px',
-              background: `linear-gradient(180deg, ${theme.p1}30 0%, rgba(16, 4, 14, 0.34) 100%)`,
+              background: `linear-gradient(180deg, ${theme.p1}30 0%, rgba(16, 4, 14, 0.42) 100%)`,
             } as React.CSSProperties
           }
         >

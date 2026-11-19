@@ -96,44 +96,43 @@
   pointer-events: none;
 }
 
-/* Perspective Cyberpunk Floor Grid */
-@keyframes grid-scroll {
+/* Perspective Cyberpunk Floor Grid (100% GPU-composited translate3d, zero repaint) */
+@keyframes grid-scroll-gpu {
   0% {
-    background-position: 0 0;
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    background-position: 0 44px;
+    transform: translate3d(0, 44px, 0);
   }
 }
 
-.cyber-floor-grid {
-  background-image:
-    linear-gradient(to right, rgba(0, 240, 255, 0.45) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 240, 255, 0.45) 1px, transparent 1px);
-  background-size: 44px 44px;
+.cyber-floor-perspective {
   transform: perspective(360px) rotateX(68deg);
   transform-origin: center top;
-  animation: grid-scroll 2.8s linear infinite;
+  contain: layout style paint;
+}
+
+.cyber-floor-grid {
+  background-size: 44px 44px;
+  will-change: transform;
+  animation: grid-scroll-gpu 2.6s linear infinite;
 }
 
 @keyframes pulse-cta {
   0%, 100% {
-    box-shadow:
-      0 0 14px rgba(255, 30, 66, 0.65),
-      0 0 32px rgba(0, 240, 255, 0.35),
-      inset 0 0 18px rgba(255, 30, 66, 0.35);
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    box-shadow:
-      0 0 22px rgba(255, 30, 66, 0.9),
-      0 0 46px rgba(0, 240, 255, 0.55),
-      inset 0 0 24px rgba(255, 30, 66, 0.5);
-    transform: scale(1.018);
+    transform: translate3d(0, 0, 0) scale(1.022);
   }
 }
 
 .animate-pulse-cta {
+  box-shadow:
+    0 0 18px rgba(255, 30, 66, 0.72),
+    0 0 34px rgba(0, 240, 255, 0.4),
+    inset 0 0 18px rgba(255, 30, 66, 0.35);
+  will-change: transform;
   animation: pulse-cta 2.2s ease-in-out infinite;
 }
 

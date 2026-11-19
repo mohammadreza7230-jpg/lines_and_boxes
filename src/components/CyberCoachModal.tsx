@@ -130,14 +130,14 @@ export const CyberCoachModal: React.FC<CyberCoachModalProps> = ({
       ];
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 px-3.5 py-5 backdrop-blur-[4px]">
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-[#020612]/74 px-3.5 py-5">
       <CyberGlassPanel
         colorStart={theme.p2}
         colorMid="#7C5CFF"
         colorEnd={theme.p1}
         className="h-[88%] w-full max-w-[375px]"
         innerClassName="flex h-full w-full flex-col"
-        tintBg={`linear-gradient(160deg, ${theme.p2}14 0%, rgba(5, 10, 22, 0.58) 52%, ${theme.p1}14 100%)`}
+        tintBg={`linear-gradient(160deg, ${theme.p2}14 0%, rgba(5, 10, 22, 0.74) 52%, ${theme.p1}14 100%)`}
         doubleFrame={false}
       >
           {/* Header */}
