@@ -1,0 +1,311 @@
+name: Build Android Debug APK (Capacitor)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-debug-apk:
+    name: Build & Publish Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Temurin Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Verify build environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -v
+          npm -v
+          java -version
+          echo "JAVA_HOME=${JAVA_HOME:-<unset>}"
+
+          JAVA_VER_LINE="$(java -version 2>&1 | head -n 1 || true)"
+          if [[ -z "${JAVA_VER_LINE}" ]]; then
+            echo "::error::Could not detect Java version output."
+            exit 1
+          fi
+
+          RAW_VER="$(echo "${JAVA_VER_LINE}" | sed -n 's/.*"\([0-9][0-9._]*\)".*/\1/p')"
+          if [[ -z "${RAW_VER}" ]]; then
+            echo "::error::Failed to parse active Java version from: ${JAVA_VER_LINE}"
+            exit 1
+          fi
+
+          if [[ "${RAW_VER}" == 1.* ]]; then
+            JAVA_MAJOR="$(echo "${RAW_VER}" | cut -d'.' -f2)"
+          else
+            JAVA_MAJOR="$(echo "${RAW_VER}" | cut -d'.' -f1)"
+          fi
+
+          if ! [[ "${JAVA_MAJOR}" =~ ^[0-9]+$ ]]; then
+            echo "::error::Detected Java major version is not numeric: ${JAVA_MAJOR}"
+            exit 1
+          fi
+
+          echo "Detected active Java major version: ${JAVA_MAJOR}"
+          if (( JAVA_MAJOR < 17 )); then
+            echo "::error::Java 17 or newer is required, but detected Java ${JAVA_MAJOR}."
+            exit 1
+          fi
+
+      - name: Build web application
+        id: build_web
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f "package-lock.json" ]]; then
+            echo "Found package-lock.json — installing dependencies with npm ci..."
+            npm ci
+          else
+            echo "No package-lock.json found — installing dependencies with npm install..."
+            npm install
+          fi
+
+          npm run build
+
+          DETECTED_DIR=""
+          for candidate in dist build out; do
+            if [[ -d "${candidate}" ]] && [[ -n "$(ls -A "${candidate}" 2>/dev/null)" ]]; then
+              DETECTED_DIR="${candidate}"
+              break
+            fi
+          done
+
+          if [[ -z "${DETECTED_DIR}" ]]; then
+            echo "::error::No non-empty web build output directory found (checked: dist, build, out)."
+            exit 1
+          fi
+
+          echo "Detected web output directory: ${DETECTED_DIR}"
+          echo "web_dir=${DETECTED_DIR}" >> "${GITHUB_OUTPUT}"
+
+      - name: Prepare Capacitor Android project
+        shell: bash
+        env:
+          WEB_DIR: ${{ steps.build_web.outputs.web_dir }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${WEB_DIR}" ]] || [[ ! -d "${WEB_DIR}" ]]; then
+            echo "::error::Web build directory '${WEB_DIR}' is missing."
+            exit 1
+          fi
+
+          # Install Capacitor packages inside the temporary runner only (never committed)
+          npm install --no-save @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7
+
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          APP_NAME="$(echo "${REPO_NAME}" | tr '_-' ' ' | sed 's/[^A-Za-z0-9 ]//g; s/  */ /g; s/^ //; s/ $//')"
+          if [[ -z "${APP_NAME}" ]]; then
+            APP_NAME="Android App"
+          fi
+
+          RAW_SEG="$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]//g')"
+          if [[ -z "${RAW_SEG}" ]]; then
+            RAW_SEG="app"
+          elif [[ ! "${RAW_SEG}" =~ ^[a-z] ]]; then
+            RAW_SEG="app${RAW_SEG}"
+          fi
+          APP_ID="com.github.${RAW_SEG}"
+
+          echo "Derived Capacitor App Name: ${APP_NAME}"
+          echo "Derived Android Application ID: ${APP_ID}"
+          echo "Using web directory: ${WEB_DIR}"
+
+          if [[ ! -f "capacitor.config.json" ]] && [[ ! -f "capacitor.config.ts" ]]; then
+            npx cap init "${APP_NAME}" "${APP_ID}" --web-dir "${WEB_DIR}"
+          fi
+
+          if [[ ! -d "android" ]]; then
+            npx cap add android
+          fi
+
+          npx cap sync android
+
+          if [[ ! -f "android/gradlew" ]]; then
+            echo "::error::Capacitor failed to generate android/gradlew."
+            exit 1
+          fi
+
+          chmod +x android/gradlew
+          echo "Capacitor Android project is ready."
+
+      - name: Build debug APK
+        working-directory: android
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./gradlew assembleDebug --stacktrace --no-daemon
+
+      - name: Verify debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_APK="android/app/build/outputs/apk/debug/app-debug.apk"
+
+          if [[ ! -e "${EXPECTED_APK}" ]]; then
+            echo "::error::Expected debug APK not found at: ${EXPECTED_APK}"
+            if [[ -d "android/app/build/outputs/apk" ]]; then
+              echo "Discovered APK files inside android/app/build/outputs/apk:"
+              find android/app/build/outputs/apk -type f -name '*.apk' || true
+            else
+              echo "Directory android/app/build/outputs/apk does not exist."
+            fi
+            exit 1
+          fi
+
+          if [[ ! -f "${EXPECTED_APK}" ]]; then
+            echo "::error::${EXPECTED_APK} is not a regular file."
+            exit 1
+          fi
+
+          if [[ ! -s "${EXPECTED_APK}" ]]; then
+            echo "::error::${EXPECTED_APK} is empty."
+            exit 1
+          fi
+
+          if [[ "${EXPECTED_APK}" != *.apk ]]; then
+            echo "::error::${EXPECTED_APK} does not have the .apk extension."
+            exit 1
+          fi
+
+          APK_SIZE="$(wc -c < "${EXPECTED_APK}")"
+          echo "Verified debug APK: ${EXPECTED_APK} (${APK_SIZE} bytes)"
+
+      - name: Upload debug APK artifact
+        id: upload_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Prepare APK release asset
+        id: prepare_asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          SAFE_REPO="$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9._-]/-/g; s/-\+/-/g; s/^-//; s/-$//')"
+          if [[ -z "${SAFE_REPO}" ]]; then
+            SAFE_REPO="android-app"
+          fi
+
+          ASSET_NAME="${SAFE_REPO}-debug-build-${GITHUB_RUN_NUMBER}.apk"
+          RELEASE_TMP_DIR="$(mktemp -d "${RUNNER_TEMP}/apk-release-XXXXXX")"
+          ASSET_PATH="${RELEASE_TMP_DIR}/${ASSET_NAME}"
+
+          cp "${EXPECTED_APK}" "${ASSET_PATH}"
+
+          if [[ ! -f "${ASSET_PATH}" ]] || [[ ! -s "${ASSET_PATH}" ]] || [[ "${ASSET_PATH}" != *.apk ]]; then
+            echo "::error::Failed to prepare valid APK release asset at ${ASSET_PATH}."
+            exit 1
+          fi
+
+          echo "Prepared release asset: ${ASSET_NAME}"
+          echo "asset_path=${ASSET_PATH}" >> "${GITHUB_OUTPUT}"
+          echo "asset_name=${ASSET_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish APK to GitHub Releases
+        id: publish_release
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSET_PATH: ${{ steps.prepare_asset.outputs.asset_path }}
+          ASSET_NAME: ${{ steps.prepare_asset.outputs.asset_name }}
+        run: |
+          set -euo pipefail
+          gh --version
+
+          if [[ -z "${ASSET_PATH}" ]] || [[ ! -f "${ASSET_PATH}" ]] || [[ ! -s "${ASSET_PATH}" ]] || [[ "${ASSET_PATH}" != *.apk ]]; then
+            echo "::error::Prepared release asset is missing or invalid."
+            exit 1
+          fi
+
+          RELEASE_TAG="debug-apk-build-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+          RELEASE_TITLE="Debug APK Build #${GITHUB_RUN_NUMBER}"
+
+          echo "release_tag=${RELEASE_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "release_title=${RELEASE_TITLE}" >> "${GITHUB_OUTPUT}"
+
+          NOTES_FILE="$(mktemp "${RUNNER_TEMP}/release-notes-XXXXXX.md")"
+          cat <<EOF > "${NOTES_FILE}"
+          This is an automatically generated Android debug APK wrapped from the React web app using Capacitor.
+
+          - **Built by:** GitHub Actions
+          - **Run Number:** ${GITHUB_RUN_NUMBER}
+          - **Run Attempt:** ${GITHUB_RUN_ATTEMPT}
+          - **Source Commit SHA:** \`${GITHUB_SHA}\`
+          - **APK File:** \`${ASSET_NAME}\`
+
+          > **Note:** This APK is intended for testing only and is **not** a Play Store production release.
+          EOF
+
+          gh release create "${RELEASE_TAG}" "${ASSET_PATH}" \
+            --target "${GITHUB_SHA}" \
+            --title "${RELEASE_TITLE}" \
+            --notes-file "${NOTES_FILE}" \
+            --latest
+
+      - name: Report APK download result
+        if: always() && steps.upload_artifact.outcome == 'success'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_OUTCOME: ${{ steps.publish_release.outcome }}
+          RELEASE_TAG: ${{ steps.publish_release.outputs.release_tag }}
+          RELEASE_TITLE: ${{ steps.publish_release.outputs.release_title }}
+          ASSET_NAME: ${{ steps.prepare_asset.outputs.asset_name }}
+        run: |
+          set -euo pipefail
+          if [[ "${RELEASE_OUTCOME}" == "success" ]] && [[ -n "${RELEASE_TAG}" ]]; then
+            RELEASE_URL="$(gh release view "${RELEASE_TAG}" --json url --jq '.url')"
+            echo "Release published successfully!"
+            echo "Release Tag: ${RELEASE_TAG}"
+            echo "Release Title: ${RELEASE_TITLE}"
+            echo "Release URL: ${RELEASE_URL}"
+            echo "APK Asset Filename: ${ASSET_NAME}"
+
+            {
+              echo "## Android Debug APK Ready"
+              echo ""
+              echo "- **Release Title:** ${RELEASE_TITLE}"
+              echo "- **Release Tag:** \`${RELEASE_TAG}\`"
+              echo "- **APK Filename:** \`${ASSET_NAME}\`"
+              echo "- **Direct Release Page:** ${RELEASE_URL}"
+              echo ""
+              echo "You can download \`${ASSET_NAME}\` directly from the **Assets** section on the GitHub Release page above."
+              echo ""
+              echo "The standard GitHub Actions artifact (\`app-debug-apk\`) is also available as a backup on this workflow run."
+            } >> "${GITHUB_STEP_SUMMARY}"
+          else
+            echo "::warning::GitHub Release publishing failed, but the Android debug APK build succeeded. Download the backup Actions artifact named 'app-debug-apk' from this workflow run."
+
+            {
+              echo "## Android Debug APK Build Succeeded (Release Publishing Warning)"
+              echo ""
+              echo "> **Warning:** Publishing to GitHub Releases did not complete, **however the debug APK build and artifact upload succeeded**."
+              echo ""
+              echo "- **Backup Download:** Download the GitHub Actions artifact named \`app-debug-apk\` from the **Artifacts** section of this workflow run."
+            } >> "${GITHUB_STEP_SUMMARY}"
+          fi
