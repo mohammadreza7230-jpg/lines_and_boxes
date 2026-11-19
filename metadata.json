@@ -1,0 +1,6 @@
+{
+  "name": "نقطه بازی - نبرد سایبری",
+  "description": "بازی سایبرپانک و نئونی نقطه و خط (Dots and Boxes) با هوش مصنوعی تاکتیکی ۳ سطحی، افکت‌های صوتی سینت‌ویو و مربی هوشمند تاکتیکی.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

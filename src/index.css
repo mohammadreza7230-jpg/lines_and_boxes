@@ -1,0 +1,188 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-sans: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+    --neon-p1: #FF1E42;
+    --neon-p2: #00F0FF;
+    --neon-violet: #7C5CFF;
+    --neon-amber: #FF5A1F;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    background-color: #02040a;
+    color: #f8fafc;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+}
+
+/* Custom Neon Glows & Beat Saber Cyberpunk Surfaces */
+.neon-text-cyan {
+  color: #e6ffff;
+  text-shadow:
+    0 0 6px rgba(0, 240, 255, 0.95),
+    0 0 18px rgba(0, 240, 255, 0.7),
+    0 0 38px rgba(0, 240, 255, 0.4);
+}
+
+.neon-text-crimson {
+  color: #ffe8ec;
+  text-shadow:
+    0 0 6px rgba(255, 30, 66, 0.95),
+    0 0 18px rgba(255, 30, 66, 0.75),
+    0 0 38px rgba(255, 30, 66, 0.45);
+}
+
+.neon-text-white {
+  color: #ffffff;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.65),
+    0 0 22px rgba(0, 240, 255, 0.35);
+}
+
+/* Chamfered Cyberpunk Card Clip */
+.cyber-chamfer {
+  clip-path: polygon(
+    14px 0%,
+    calc(100% - 14px) 0%,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0% calc(100% - 14px),
+    0% 14px
+  );
+}
+
+.cyber-chamfer-sm {
+  clip-path: polygon(
+    10px 0%,
+    calc(100% - 10px) 0%,
+    100% 10px,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    10px 100%,
+    0% calc(100% - 10px),
+    0% 10px
+  );
+}
+
+/* True see-through gradient border ring (no solid fill behind translucent glass) */
+.neon-ring-border {
+  position: relative;
+}
+.neon-ring-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: var(--ring-width, 1.5px);
+  background: var(--ring-gradient);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Perspective Cyberpunk Floor Grid */
+@keyframes grid-scroll {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 44px;
+  }
+}
+
+.cyber-floor-grid {
+  background-image:
+    linear-gradient(to right, rgba(0, 240, 255, 0.45) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.45) 1px, transparent 1px);
+  background-size: 44px 44px;
+  transform: perspective(360px) rotateX(68deg);
+  transform-origin: center top;
+  animation: grid-scroll 2.8s linear infinite;
+}
+
+@keyframes pulse-cta {
+  0%, 100% {
+    box-shadow:
+      0 0 14px rgba(255, 30, 66, 0.65),
+      0 0 32px rgba(0, 240, 255, 0.35),
+      inset 0 0 18px rgba(255, 30, 66, 0.35);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 22px rgba(255, 30, 66, 0.9),
+      0 0 46px rgba(0, 240, 255, 0.55),
+      inset 0 0 24px rgba(255, 30, 66, 0.5);
+    transform: scale(1.018);
+  }
+}
+
+.animate-pulse-cta {
+  animation: pulse-cta 2.2s ease-in-out infinite;
+}
+
+@keyframes combo-float {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 14px) scale(0.72);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, -6px) scale(1.12);
+  }
+  32% {
+    transform: translate(-50%, -12px) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -26px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -44px) scale(0.92);
+  }
+}
+
+.animate-combo-float {
+  animation: combo-float 1.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Sprite Sheet Screen Blend Helper */
+.sprite-screen {
+  mix-blend-mode: screen;
+}
+
+/* Custom sleek dark scrollbar for modals/chat */
+.cyber-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.cyber-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+.cyber-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.35);
+  border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cyber-floor-grid,
+  .animate-pulse-cta {
+    animation: none !important;
+  }
+}
