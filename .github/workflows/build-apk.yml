@@ -131,7 +131,17 @@ jobs:
           echo "Using web directory: ${WEB_DIR}"
 
           if [[ ! -f "capacitor.config.json" ]] && [[ ! -f "capacitor.config.ts" ]]; then
-            npx cap init "${APP_NAME}" "${APP_ID}" --web-dir "${WEB_DIR}"
+            APP_ID="${APP_ID}" APP_NAME="${APP_NAME}" WEB_DIR="${WEB_DIR}" node -e '
+              const fs = require("fs");
+              const cfg = {
+                appId: process.env.APP_ID,
+                appName: process.env.APP_NAME,
+                webDir: process.env.WEB_DIR
+              };
+              fs.writeFileSync("capacitor.config.json", JSON.stringify(cfg, null, 2) + "\n");
+            '
+            echo "Generated capacitor.config.json:"
+            cat capacitor.config.json
           fi
 
           if [[ ! -d "android" ]]; then
